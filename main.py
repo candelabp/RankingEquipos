@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     modelo = PerceptronAnalistaFutbol()
     vista = Vista(ventana)
-    grafico = Grafico(ventana, modelo)
+    grafico = Grafico(vista.graph_frame, modelo)
     controlador = Controlador(vista, grafico, ventana, modelo)
 
     ventana.mainloop()
