@@ -39,7 +39,9 @@ class PerceptronAnalistaFutbol:
 
     def predecir(self, entrada):
         """Calcula la salida de las 3 neuronas simultáneamente."""
+        #producto entre pesos y entradas para cada neurona
         sumas = np.dot(self.pesos, entrada)
+        #convierte cada suma en 1 o -1 según la función de activación
         predicciones = [self.activacion(s) for s in sumas]
         return np.array(predicciones), sumas
 
@@ -50,7 +52,8 @@ class PerceptronAnalistaFutbol:
         GF y GC se dividen por 100, GV se divide por 10.
         """
         return np.array([1.0, float(gf) / 100.0, float(gc) / 100.0, float(gv) / 10.0])
-
+    
+# Entrena el perceptrón hasta que no haya errores o se alcance el máximo de épocas
     def entrenamiento_completo(self, max_epocas=5000):
         self.errors_history = []
         self.training_complete = False
@@ -58,11 +61,11 @@ class PerceptronAnalistaFutbol:
 
         for epoca in range(1, max_epocas + 1):
             errores_totales = 0
-
+# Recorre cada entrada y su salida deseada para ajustar los pesos
             for entrada_actual, deseado in zip(self.entradas, self.salidas_deseadas):
                 prediccion, _ = self.predecir(entrada_actual)
                 error_vector = deseado - prediccion
-
+# Si hay algún error, ajusta los pesos de las neuronas correspondientes
                 if np.any(error_vector != 0):
                     errores_totales += 1
                     for n in range(3):
@@ -78,13 +81,14 @@ class PerceptronAnalistaFutbol:
                 break
 
         if not self.training_complete:
-            print(f"⚠ Se alcanzó el máximo de épocas ({max_epocas}) con {self.errors_history[-1]} errores.")
+            print(f" Se alcanzó el máximo de épocas ({max_epocas}) con {self.errors_history[-1]} errores.")
 
         self.iteracion = self.epoch_count
         self.bandera = not self.training_complete
         self.y, _ = self.predecir(self.entradas[-1])
         return self.errors_history
-
+    
+# Clasifica un equipo ingresado por el usuario y según sus características devuelve la categoría correspondiente
     def clasificar_equipo(self, gf, gc, gv):
         entrada = self._normalizar_entrada(gf, gc, gv)
         prediccion, sumas = self.predecir(entrada)

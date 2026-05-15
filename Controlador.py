@@ -10,6 +10,26 @@ class Controlador:
         self.vista.btnPrueba.config(command=self.EventPrueba)
         self.grafico.canvas.mpl_connect('close_event', lambda e: plt.close())
 
+    def actualizar_panel_entrenamiento(self, errores):
+        fila = len(self.modelo.entradas) - 1
+        entrada = self.modelo.entradas[fila]
+        salida_deseada = self.modelo.salidas_deseadas[fila]
+        salida_obtenida, _ = self.modelo.predecir(entrada)
+
+        self.vista.lblEpoca.config(text=f"Época: {self.modelo.epoch_count}")
+        self.vista.lblErrores.config(text=f"Errores: {errores}")
+        self.vista.lblEntrada1.config(text=f"Goles Favor: {entrada[1]}")
+        self.vista.lblEntrada2.config(text=f"Goles Contra: {entrada[2]}")
+        self.vista.lblEntrada3.config(text=f"Visitante: {entrada[3]}")
+        self.vista.lblPeso1.config(text=f"Campeón: {self.modelo.pesos[0].tolist()}")
+        self.vista.lblPeso2.config(text=f"Media Tabla: {self.modelo.pesos[1].tolist()}")
+        self.vista.lblUmbral.config(text=f"Descenso: {self.modelo.pesos[2].tolist()}")
+        self.vista.lblSalidaDeseada.config(text=f"Deseada: {salida_deseada.tolist()}")
+        self.vista.lblSalidaObtenida.config(text=f"Salida obtenida: {salida_obtenida.tolist()}")
+        self.vista.lblFactorAprendizaje.config(
+            text=f"Factor Aprendizaje: {self.modelo.factor_aprendizaje}"
+        )
+
     def EventEntrenamiento(self):
         self.modelo.Entrenamiento()
 
@@ -17,20 +37,7 @@ class Controlador:
         estado = "ENTRENAMIENTO COMPLETO" if self.modelo.training_complete else "ENTRENANDO"
 
         self.vista.lblTituloPrincipal.config(text=estado)
-        self.vista.lblEpoca.config(text=f"Época: {self.modelo.epoch_count}")
-        self.vista.lblErrores.config(text=f"Errores: {errores}")
-        self.vista.lblEntrada1.config(text=f"Goles Favor: {self.modelo.getEntradas(1)}")
-        self.vista.lblEntrada2.config(text=f"Goles Contra: {self.modelo.getEntradas(2)}")
-        self.vista.lblEntrada3.config(text=f"Visitante: {self.modelo.getEntradas(3)}")
-        self.vista.lblPeso1.config(text=f"Campeón: {self.modelo.pesos[0].tolist()}")
-        self.vista.lblPeso2.config(text=f"Media Tabla: {self.modelo.pesos[1].tolist()}")
-        self.vista.lblUmbral.config(text=f"Descenso: {self.modelo.pesos[2].tolist()}")
-        self.vista.lblSalidaDeseada.config(text=f"Deseada: {self.modelo.salidas_deseadas[-1].tolist()}")
-        self.vista.lblSalidaObtenida.config(text=f"Salida final: {self.modelo.y.tolist()}")
-
-        self.vista.lblFactorAprendizaje.config(
-            text=f"Factor Aprendizaje: {self.modelo.factor_aprendizaje}"
-        )
+        self.actualizar_panel_entrenamiento(errores)
 
         self.grafico.actualizar()
 
@@ -39,16 +46,7 @@ class Controlador:
 
         estado = "APRENDIZAJE COMPLETO" if self.modelo.training_complete else "APRENDIENDO"
         self.vista.lblTituloPrincipal.config(text=estado)
-        self.vista.lblEpoca.config(text=f"Época: {self.modelo.epoch_count}")
-        self.vista.lblErrores.config(text=f"Errores: {errores}")
-        self.vista.lblPeso1.config(text=f"Campeón: {self.modelo.pesos[0].tolist()}")
-        self.vista.lblPeso2.config(text=f"Media Tabla: {self.modelo.pesos[1].tolist()}")
-        self.vista.lblUmbral.config(text=f"Descenso: {self.modelo.pesos[2].tolist()}")
-        self.vista.lblSalidaObtenida.config(text=f"Salida actual: {self.modelo.y.tolist()}")
-
-        self.vista.lblFactorAprendizaje.config(
-            text=f"Factor Aprendizaje: {self.modelo.factor_aprendizaje}"
-        )
+        self.actualizar_panel_entrenamiento(errores)
 
         self.grafico.actualizar()
 
