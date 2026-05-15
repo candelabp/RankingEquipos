@@ -2,11 +2,10 @@ import numpy as np
 
 
 class PerceptronAnalistaFutbol:
-    def __init__(self, factor_aprendizaje=0.001):  # FIX 1: factor reducido de 0.01 a 0.001
+    def __init__(self, factor_aprendizaje=0.001):
         self.factor_aprendizaje = factor_aprendizaje
 
-        # FIX 2: Datos NORMALIZADOS (todos en escala 0.0 a 1.0)
-        # Escala usada: GF y GC divididos por 100, GV dividido por 10
+        # Datos NORMALIZADOS (todos en escala 0.0 a 1.0)
         # [Sesgo, Goles+ /100, Goles- /100, Ganados Visitante /10]
         self.entradas = np.array([
             [1.0, 0.80, 0.25, 1.0],  # Campeón
@@ -47,13 +46,13 @@ class PerceptronAnalistaFutbol:
 
     def _normalizar_entrada(self, gf, gc, gv):
         """
-        FIX 2: Normaliza los valores ingresados por el usuario
+        Normaliza los valores ingresados por el usuario
         para que coincidan con la escala de los datos de entrenamiento.
         GF y GC se dividen por 100, GV se divide por 10.
         """
         return np.array([1.0, float(gf) / 100.0, float(gc) / 100.0, float(gv) / 10.0])
 
-    def entrenamiento_completo(self, max_epocas=5000):  # FIX 3: más épocas (1000 -> 5000)
+    def entrenamiento_completo(self, max_epocas=5000):
         self.errors_history = []
         self.training_complete = False
         print(f"Iniciando entrenamiento - Factor: {self.factor_aprendizaje} | Máx. épocas: {max_epocas}")
@@ -88,7 +87,6 @@ class PerceptronAnalistaFutbol:
         return self.errors_history
 
     def clasificar_equipo(self, gf, gc, gv):
-        # FIX 2: Se normaliza la entrada antes de predecir
         entrada = self._normalizar_entrada(gf, gc, gv)
         prediccion, sumas = self.predecir(entrada)
 
@@ -99,7 +97,8 @@ class PerceptronAnalistaFutbol:
         else:
             return prediccion, sumas, "Sin clasificación clara"
 
-        categoria = f"{self.nombres_neuronas[indice_ganador]} (Confianza: {round(sumas[indice_ganador], 2)})"
+        # FIX: 4 decimales para ver valores reales (antes era 2 y mostraba 0.0)
+        categoria = f"{self.nombres_neuronas[indice_ganador]} (Confianza: {round(sumas[indice_ganador], 4)})"
         return prediccion, sumas, categoria
 
     def getEntradas(self, index):
@@ -146,22 +145,3 @@ class PerceptronAnalistaFutbol:
 
     def PruebaFuncionamiento(self, gf, gc, gv):
         return self.clasificar_equipo(gf, gc, gv)
-
-
-# --- PRUEBA RÁPIDA ---
-if __name__ == "__main__":
-    modelo = PerceptronAnalistaFutbol()
-    modelo.Entrenamiento()
-
-    casos = [
-        (75, 28, 9,  "Campeón esperado"),
-        (50, 48, 4,  "Media Tabla esperado"),
-        (28, 72, 1,  "Descenso esperado"),
-        (60, 44, 5,  "Límite (Campeón/Media)"),
-        (80, 70, 0,  "Contradicción"),
-    ]
-
-    print("\n--- RESULTADOS DE PRUEBA ---")
-    for gf, gc, gv, descripcion in casos:
-        _, _, categoria = modelo.PruebaFuncionamiento(gf, gc, gv)
-        print(f"{descripcion:<30} → {categoria}")

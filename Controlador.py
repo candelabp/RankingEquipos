@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 class Controlador:
     def __init__(self, Vista, Grafico, Ventana, modelo):
         self.vista, self.grafico, self.ventana, self.modelo = Vista, Grafico, Ventana, modelo
-
         self.vista.btnEntrenamiento.config(command=self.EventEntrenamiento)
         self.vista.btnAprendizaje.config(command=self.EventAprendizaje)
         self.vista.btnPrueba.config(command=self.EventPrueba)
@@ -13,6 +12,7 @@ class Controlador:
 
     def EventEntrenamiento(self):
         self.modelo.Entrenamiento()
+
         errores = self.modelo.errors_history[-1] if self.modelo.errors_history else 0
         estado = "ENTRENAMIENTO COMPLETO" if self.modelo.training_complete else "ENTRENANDO"
 
@@ -27,12 +27,18 @@ class Controlador:
         self.vista.lblUmbral.config(text=f"Descenso: {self.modelo.pesos[2].tolist()}")
         self.vista.lblSalidaDeseada.config(text=f"Deseada: {self.modelo.salidas_deseadas[-1].tolist()}")
         self.vista.lblSalidaObtenida.config(text=f"Salida final: {self.modelo.y.tolist()}")
+
+        # FIX: muestra el factor de aprendizaje real del modelo (antes estaba hardcodeado en Vista)
+        self.vista.lblFactorAprendizaje.config(
+            text=f"Factor Aprendizaje: {self.modelo.factor_aprendizaje}"
+        )
+
         self.grafico.actualizar()
 
     def EventAprendizaje(self):
         errores = self.modelo.Aprendizaje()
-        estado = "APRENDIZAJE COMPLETO" if self.modelo.training_complete else "APRENDIENDO"
 
+        estado = "APRENDIZAJE COMPLETO" if self.modelo.training_complete else "APRENDIENDO"
         self.vista.lblTituloPrincipal.config(text=estado)
         self.vista.lblEpoca.config(text=f"Época: {self.modelo.epoch_count}")
         self.vista.lblErrores.config(text=f"Errores: {errores}")
@@ -40,6 +46,12 @@ class Controlador:
         self.vista.lblPeso2.config(text=f"Media Tabla: {self.modelo.pesos[1].tolist()}")
         self.vista.lblUmbral.config(text=f"Descenso: {self.modelo.pesos[2].tolist()}")
         self.vista.lblSalidaObtenida.config(text=f"Salida actual: {self.modelo.y.tolist()}")
+
+        # FIX: muestra el factor de aprendizaje real del modelo
+        self.vista.lblFactorAprendizaje.config(
+            text=f"Factor Aprendizaje: {self.modelo.factor_aprendizaje}"
+        )
+
         self.grafico.actualizar()
 
         if self.modelo.training_complete:
