@@ -28,7 +28,6 @@ class Controlador:
         self.vista.lblSalidaDeseada.config(text=f"Deseada: {self.modelo.salidas_deseadas[-1].tolist()}")
         self.vista.lblSalidaObtenida.config(text=f"Salida final: {self.modelo.y.tolist()}")
 
-        # FIX: muestra el factor de aprendizaje real del modelo (antes estaba hardcodeado en Vista)
         self.vista.lblFactorAprendizaje.config(
             text=f"Factor Aprendizaje: {self.modelo.factor_aprendizaje}"
         )
@@ -47,7 +46,6 @@ class Controlador:
         self.vista.lblUmbral.config(text=f"Descenso: {self.modelo.pesos[2].tolist()}")
         self.vista.lblSalidaObtenida.config(text=f"Salida actual: {self.modelo.y.tolist()}")
 
-        # FIX: muestra el factor de aprendizaje real del modelo
         self.vista.lblFactorAprendizaje.config(
             text=f"Factor Aprendizaje: {self.modelo.factor_aprendizaje}"
         )
