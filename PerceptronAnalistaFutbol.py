@@ -5,8 +5,7 @@ class PerceptronAnalistaFutbol:
     def __init__(self, factor_aprendizaje=0.001):
         self.factor_aprendizaje = factor_aprendizaje
 
-        # Datos NORMALIZADOS (todos en escala 0.0 a 1.0)
-        # [Sesgo, Goles+ /100, Goles- /100, Ganados Visitante /10]
+        # [Sesgo, Goles+ , Goles- , Ganados Visitante]
         self.entradas = np.array([
             [1.0, 0.80, 0.25, 1.0],  # Campeón
             [1.0, 0.70, 0.30, 0.8],  # Campeón
@@ -16,7 +15,7 @@ class PerceptronAnalistaFutbol:
             [1.0, 0.25, 0.75, 0.0]   # Descenso
         ])
 
-        # Salidas deseadas (One-Hot Encoding con 1 y -1)
+        # Salidas deseadas 
         self.salidas_deseadas = np.array([
             [1.0, -1.0, -1.0], [1.0, -1.0, -1.0],   # Campeón
             [-1.0, 1.0, -1.0], [-1.0, 1.0, -1.0],   # Media
@@ -97,8 +96,7 @@ class PerceptronAnalistaFutbol:
         else:
             return prediccion, sumas, "Sin clasificación clara"
 
-        # FIX: 4 decimales para ver valores reales (antes era 2 y mostraba 0.0)
-        categoria = f"{self.nombres_neuronas[indice_ganador]} (Confianza: {round(sumas[indice_ganador], 4)})"
+        categoria = f"{self.nombres_neuronas[indice_ganador]}"
         return prediccion, sumas, categoria
 
     def getEntradas(self, index):

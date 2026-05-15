@@ -8,8 +8,8 @@ class Grafico:
         self.frame = frame
         self.modelo = modelo
 
-        self.figura = Figure(figsize=(6, 5), dpi=100)
-        self.ax_error, self.ax_weights = self.figura.subplots(2, 1, sharex=False)
+        self.figura = Figure(figsize=(6, 4), dpi=100)
+        self.ax_error = self.figura.subplots(1, 1)
 
         self.canvas = FigureCanvasTkAgg(self.figura, master=self.frame)
         self.canvas.get_tk_widget().pack(fill="both", expand=True)
@@ -18,7 +18,6 @@ class Grafico:
 
     def DibujarEjes(self):
         self.ax_error.clear()
-        self.ax_weights.clear()
 
         self.ax_error.axis('off')
         self.ax_error.text(
@@ -47,12 +46,10 @@ class Grafico:
             fontsize=10
         )
 
-        self.ax_weights.axis('off')
         self.canvas.draw()
 
     def actualizar(self):
         self.ax_error.clear()
-        self.ax_weights.clear()
 
         if self.modelo.errors_history:
             epocas = list(range(1, len(self.modelo.errors_history) + 1))
@@ -62,29 +59,15 @@ class Grafico:
             self.ax_error.set_ylabel('Errores')
             self.ax_error.set_ylim(bottom=0)
             self.ax_error.grid(True, linestyle='--', alpha=0.4)
-
-            pesos_norma = [sum(abs(w) for w in self.modelo.pesos[i]) for i in range(3)]
-            self.ax_weights.bar(self.modelo.nombres_neuronas, pesos_norma, color=['#4caf50', '#2196f3', '#ff9800'])
-            self.ax_weights.set_title('Magnitud de pesos por categoría')
-            self.ax_weights.set_ylabel('Magnitud')
         else:
             self.ax_error.axis('off')
             self.ax_error.text(
                 0.5,
-                0.6,
+                0.5,
                 "Presiona 'Entrenamiento' para ajustar el perceptrón.",
                 ha='center',
                 va='center',
                 fontsize=11
-            )
-            self.ax_weights.axis('off')
-            self.ax_weights.text(
-                0.5,
-                0.5,
-                "El gráfico mostrará la evolución de errores y los pesos finales.",
-                ha='center',
-                va='center',
-                fontsize=10
             )
 
         self.canvas.draw()
